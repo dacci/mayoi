@@ -5,20 +5,13 @@
 #include <base/command_line.h>
 #include <base/logging.h>
 
-#include <base/strings/string_split.h>
-
 #include "misc/launcher.h"
+#include "ui/configure_dialog.h"
 
 namespace mayoi {
 namespace app {
-namespace switches {
 
-const char kIgnoreEnvironment[] = "ignore-environment";
-const char kUnset[] = "unset";
-
-}  // namespace switches
-
-Application::Application() : message_loop_(nullptr) {}
+Application::Application() : message_loop_(nullptr), dialog_(nullptr) {}
 
 Application::~Application() {
   base::CommandLine::Reset();
@@ -56,7 +49,13 @@ HRESULT Application::PreMessageLoop(int show_mode) throw() {
     return result;
   }
 
-  result = Launch();
+  {
+    misc::Launcher launcher;
+    result = launcher.Setup(base::CommandLine::ForCurrentProcess());
+    if (result == S_OK)
+      result = launcher.Launch();
+  }
+
   if (result != S_FALSE) {
     if (SUCCEEDED(result))
       DLOG(INFO) << "Process launched.";
@@ -72,10 +71,29 @@ HRESULT Application::PreMessageLoop(int show_mode) throw() {
     return S_FALSE;
   }
 
+  dialog_ = new ui::ConfigureDialog();
+  if (dialog_ == nullptr) {
+    LOG(ERROR) << "Failed to allocate ConfigureDialog.";
+    return S_FALSE;
+  }
+
+  if (dialog_->Create(NULL) == NULL) {
+    LOG(ERROR) << "Failed to create dialog: " << GetLastError();
+    return S_FALSE;
+  }
+
+  dialog_->ShowWindow(show_mode);
+  dialog_->UpdateWindow();
+
   return S_OK;
 }
 
 HRESULT Application::PostMessageLoop() throw() {
+  if (dialog_ != nullptr) {
+    delete dialog_;
+    dialog_ = nullptr;
+  }
+
   if (message_loop_ != nullptr) {
     delete message_loop_;
     message_loop_ = nullptr;
@@ -87,53 +105,6 @@ HRESULT Application::PostMessageLoop() throw() {
 void Application::RunMessageLoop() throw() {
   DCHECK(message_loop_ != nullptr);
   message_loop_->Run();
-}
-
-HRESULT Application::Launch() {
-  auto command_line = base::CommandLine::ForCurrentProcess();
-  auto args = command_line->GetArgs();
-  if (args.empty()) {
-    DLOG(INFO) << "No argument is specified.";
-    return S_FALSE;
-  }
-
-  misc::Launcher launcher;
-
-  if (!command_line->HasSwitch(switches::kIgnoreEnvironment) &&
-      !launcher.LoadVariables())
-    return E_FAIL;
-
-  auto has_program = false;
-  for (const auto& arg : args) {
-    if (has_program) {
-      launcher.AddArgument(arg);
-      continue;
-    }
-
-    auto index = arg.find(L'=');
-    if (index == arg.npos) {
-      has_program = true;
-      launcher.SetProgram(arg);
-      continue;
-    }
-
-    launcher.SetVariable(arg.substr(0, index), arg.substr(index + 1));
-  }
-
-  if (!has_program) {
-    DLOG(INFO) << "No program is specified.";
-    return S_FALSE;
-  }
-
-  if (command_line->HasSwitch(switches::kUnset)) {
-    auto value = command_line->GetSwitchValueNative(switches::kUnset);
-    auto names = base::SplitString(value, L",", base::TRIM_WHITESPACE,
-                                   base::SPLIT_WANT_NONEMPTY);
-    for (const auto& name : names)
-      launcher.UnsetVariable(name);
-  }
-
-  return launcher.Launch();
 }
 
 }  // namespace app

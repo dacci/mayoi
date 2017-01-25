@@ -10,6 +10,12 @@
 #include <base/at_exit.h>
 
 namespace mayoi {
+namespace ui {
+
+class ConfigureDialog;
+
+}  // namespace ui
+
 namespace app {
 
 class Application : public CAtlExeModuleT<Application> {
@@ -27,11 +33,10 @@ class Application : public CAtlExeModuleT<Application> {
   }
 
  private:
-  static HRESULT Launch();
-
   base::AtExitManager at_exit_manager_;
 
   CMessageLoop* message_loop_;
+  ui::ConfigureDialog* dialog_;
 
   Application(const Application&) = delete;
   Application& operator=(const Application&) = delete;

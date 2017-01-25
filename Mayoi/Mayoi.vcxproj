@@ -217,12 +217,18 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="app\application.cpp" />
+    <ClCompile Include="misc\extension_filter.cpp" />
     <ClCompile Include="misc\launcher.cpp" />
+    <ClCompile Include="ui\configure_dialog.cpp" />
+    <ClCompile Include="ui\variable_dialog.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="app\application.h" />
+    <ClInclude Include="misc\extension_filter.h" />
     <ClInclude Include="misc\launcher.h" />
     <ClInclude Include="res\resource.h" />
+    <ClInclude Include="ui\configure_dialog.h" />
+    <ClInclude Include="ui\variable_dialog.h" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="res\resource.rc" />
