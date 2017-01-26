@@ -15,8 +15,18 @@
 namespace mayoi {
 namespace misc {
 
+struct CaseInsensitiveLess {
+  bool operator()(const base::string16& a, const base::string16& b) const {
+    return _wcsicmp(a.c_str(), b.c_str()) < 0;
+  }
+};
+
 class Launcher {
  public:
+  typedef std::map<base::string16, base::string16, CaseInsensitiveLess>
+      VariableMap;
+  typedef std::set<base::string16, CaseInsensitiveLess> VariableSet;
+
   Launcher();
 
   HRESULT Setup(const base::CommandLine* command_line);
@@ -33,11 +43,11 @@ class Launcher {
 
   base::string16 GetCommandLineString() const;
 
-  const std::map<base::string16, base::string16>& variables() const {
+  const VariableMap& variables() const {
     return variables_;
   }
 
-  const std::set<base::string16>& unsets() const {
+  const VariableSet& unsets() const {
     return unsets_;
   }
 
@@ -51,8 +61,8 @@ class Launcher {
 
  private:
   base::CommandLine command_line_;
-  std::map<base::string16, base::string16> variables_;
-  std::set<base::string16> unsets_;
+  VariableMap variables_;
+  VariableSet unsets_;
   bool ignore_environment_;
 
   Launcher(const Launcher&) = delete;

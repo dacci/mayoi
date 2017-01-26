@@ -96,9 +96,14 @@ HRESULT Launcher::Launch() {
     if (unsets_.find(pair.first) != unsets_.end())
       continue;
 
+    auto length = ExpandEnvironmentStrings(pair.second.c_str(), nullptr, 0);
+    string16 expanded;
+    expanded.resize(length - 1);
+    ExpandEnvironmentStrings(pair.second.c_str(), &expanded[0], length);
+
     environment.append(pair.first)
         .append(L"=")
-        .append(pair.second)
+        .append(expanded)
         .push_back(L'\0');
   }
   environment.push_back(L'\0');
@@ -143,12 +148,7 @@ void Launcher::AddArgument(const string16& argument) {
 }
 
 void Launcher::SetVariable(const string16& name, const string16& value) {
-  auto length = ExpandEnvironmentStrings(value.c_str(), nullptr, 0);
-  string16 expanded;
-  expanded.resize(length - 1);
-  ExpandEnvironmentStrings(value.c_str(), &expanded[0], length);
-
-  variables_[name] = std::move(expanded);
+  variables_[name] = value;
 }
 
 void Launcher::UnsetVariable(const string16& name) {
