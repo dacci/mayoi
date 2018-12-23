@@ -22,9 +22,9 @@
 namespace mayoi {
 namespace ui {
 
-class ConfigureDialog : public CDialogImpl<ConfigureDialog>,
-                        public CWinDataExchange<ConfigureDialog>,
-                        private CMessageFilter {
+class ConfigureDialog final : public CDialogImpl<ConfigureDialog>,
+                              public CWinDataExchange<ConfigureDialog>,
+                              private CMessageFilter {
  public:
   static const UINT IDD = IDD_CONFIGURE;
 

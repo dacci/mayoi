@@ -7,8 +7,6 @@
 namespace mayoi {
 namespace misc {
 
-ExtensionFilter::ExtensionFilter() {}
-
 void ExtensionFilter::AddExtensions(const CString& extensions) {
   for (auto index = 0;;) {
     auto token = extensions.Tokenize(L";", index);
@@ -22,7 +20,7 @@ void ExtensionFilter::AddExtensions(const CString& extensions) {
                                    sizeof(file_info),
                                    SHGFI_TYPENAME | SHGFI_USEFILEATTRIBUTES);
     if (succeeded) {
-      names_.push_back(file_info.szTypeName);
+      names_.emplace_back(file_info.szTypeName);
       specs_.push_back(token);
       filters_.push_back(COMDLG_FILTERSPEC{names_.back(), specs_.back()});
     }

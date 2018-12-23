@@ -21,7 +21,7 @@ namespace mayoi {
 namespace ui {
 
 ConfigureDialog::ConfigureDialog()
-    : icon_index_(0), ignore_environment_(false) {
+    : icon_index_{0}, ignore_environment_{false} {
   CString pathext;
   pathext.GetEnvironmentVariable(L"PATHEXT");
   command_filter_.AddExtensions(pathext);
@@ -61,7 +61,8 @@ bool ConfigureDialog::ValidateContent() {
   CString message;
   message.LoadString(IDS_ERR_NOT_SPECIFIED);
 
-  EDITBALLOONTIP balloon{sizeof(balloon)};
+  EDITBALLOONTIP balloon{};
+  balloon.cbStruct = sizeof(balloon);
   balloon.pszText = message;
 
   DoDataExchange(DDX_SAVE);
@@ -207,7 +208,7 @@ void ConfigureDialog::OnFileOpen(UINT /*notify_code*/, int /*id*/,
   }
 
   {
-    CComQIPtr<IPersistFile> file(shortcut_);
+    CComQIPtr<IPersistFile> file{shortcut_};
     result = file->Load(save_path_, STGM_READ);
     if (FAILED(result)) {
       LOG(ERROR) << "Failed to load file: 0x" << std::hex << result;
@@ -218,11 +219,11 @@ void ConfigureDialog::OnFileOpen(UINT /*notify_code*/, int /*id*/,
   misc::Launcher launcher;
 
   {
-    CComQIPtr<IPropertyStore> store(shortcut_);
+    CComQIPtr<IPropertyStore> store{shortcut_};
     base::win::ScopedPropVariant prop;
     result = store->GetValue(PKEY_Link_Arguments, prop.Receive());
     if (SUCCEEDED(result)) {
-      base::string16 arguments(prop.get().bstrVal);
+      base::string16 arguments{prop.get().bstrVal};
       arguments.insert(0, L"\"\" ");
       auto command_line = base::CommandLine::FromString(arguments);
       launcher.Setup(&command_line);
@@ -314,7 +315,7 @@ void ConfigureDialog::OnFileSave(UINT notify_code, int id, CWindow control) {
   shortcut_->SetIconLocation(icon_path_, icon_index_);
 
   {
-    CComQIPtr<IPersistFile> file(shortcut_);
+    CComQIPtr<IPersistFile> file{shortcut_};
     auto result = file->Save(save_path_, TRUE);
     if (FAILED(result)) {
       LOG(ERROR) << "Failed to save: 0x" << std::hex << result;
@@ -327,7 +328,7 @@ void ConfigureDialog::OnFileSaveAs(UINT notify_code, int id, CWindow control) {
   if (!ValidateContent())
     return;
 
-  CShellFileSaveDialog dialog(save_path_);
+  CShellFileSaveDialog dialog{save_path_};
   dialog.m_spFileDlg->SetFileTypes(shortcut_filter_.size(),
                                    shortcut_filter_.get());
   dialog.m_spFileDlg->SetDefaultExtension(L"lnk");
@@ -357,7 +358,7 @@ void ConfigureDialog::OnFilePageSetup(UINT /*notify_code*/, int /*id*/,
 
 void ConfigureDialog::OnSelectCommand(UINT /*notify_code*/, int /*id*/,
                                       CWindow /*control*/) {
-  CShellFileOpenDialog dialog(file_name_);
+  CShellFileOpenDialog dialog{file_name_};
   dialog.m_spFileDlg->SetFileTypes(command_filter_.size(),
                                    command_filter_.get());
   dialog.m_spFileDlg->SetFileTypeIndex(2);
@@ -379,7 +380,7 @@ void ConfigureDialog::OnSelectCommand(UINT /*notify_code*/, int /*id*/,
 
 void ConfigureDialog::OnSelectDir(UINT /*notify_code*/, int /*id*/,
                                   CWindow /*control*/) {
-  CShellFileOpenDialog dialog(directory_);
+  CShellFileOpenDialog dialog{directory_};
   FILEOPENDIALOGOPTIONS options{};
   dialog.m_spFileDlg->GetOptions(&options);
   options |= FOS_PICKFOLDERS;
@@ -394,7 +395,7 @@ void ConfigureDialog::OnSelectDir(UINT /*notify_code*/, int /*id*/,
 
 void ConfigureDialog::OnUnsetEdit(UINT /*notify_code*/, int id,
                                   CWindow /*control*/) {
-  VariableDialog dialog(true);
+  VariableDialog dialog{true};
 
   auto index = -1;
   if (id == IDC_UNSET_EDIT) {
@@ -431,7 +432,7 @@ void ConfigureDialog::OnUnsetDel(UINT /*notify_code*/, int /*id*/,
 
 void ConfigureDialog::OnMergeEdit(UINT /*notify_code*/, int id,
                                   CWindow /*control*/) {
-  VariableDialog dialog(false);
+  VariableDialog dialog{false};
 
   auto index = -1;
   if (id == IDC_MERGE_EDIT) {

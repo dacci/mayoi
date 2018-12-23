@@ -17,8 +17,8 @@
 namespace mayoi {
 namespace ui {
 
-class VariableDialog : public CDialogImpl<VariableDialog>,
-                       public CWinDataExchange<VariableDialog> {
+class VariableDialog final : public CDialogImpl<VariableDialog>,
+                             public CWinDataExchange<VariableDialog> {
  public:
   static const UINT IDD = IDD_VARIABLE;
 

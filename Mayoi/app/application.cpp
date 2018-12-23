@@ -11,14 +11,12 @@
 namespace mayoi {
 namespace app {
 
-Application::Application() : message_loop_(nullptr), dialog_(nullptr) {}
-
 Application::~Application() {
   base::CommandLine::Reset();
 }
 
 bool Application::ParseCommandLine(LPCTSTR /*command_line*/,
-                                   HRESULT* result) throw() {
+                                   HRESULT* result) noexcept {
   *result = S_OK;
 
   base::CommandLine::set_slash_is_not_a_switch();
@@ -41,7 +39,7 @@ bool Application::ParseCommandLine(LPCTSTR /*command_line*/,
   return true;
 }
 
-HRESULT Application::PreMessageLoop(int show_mode) throw() {
+HRESULT Application::PreMessageLoop(int show_mode) noexcept {
   auto result = CAtlExeModuleT::PreMessageLoop(show_mode);
   if (FAILED(result)) {
     LOG(ERROR) << "CAtlExeModuleT::PreMessageLoop() returned: 0x" << std::hex
@@ -65,13 +63,13 @@ HRESULT Application::PreMessageLoop(int show_mode) throw() {
     return S_FALSE;
   }
 
-  message_loop_ = new CMessageLoop();
+  message_loop_ = std::make_unique<CMessageLoop>();
   if (message_loop_ == nullptr) {
     LOG(ERROR) << "Failed to allocate CMessageLoop.";
     return S_FALSE;
   }
 
-  dialog_ = new ui::ConfigureDialog();
+  dialog_ = std::make_unique<ui::ConfigureDialog>();
   if (dialog_ == nullptr) {
     LOG(ERROR) << "Failed to allocate ConfigureDialog.";
     return S_FALSE;
@@ -88,21 +86,17 @@ HRESULT Application::PreMessageLoop(int show_mode) throw() {
   return S_OK;
 }
 
-HRESULT Application::PostMessageLoop() throw() {
-  if (dialog_ != nullptr) {
-    delete dialog_;
-    dialog_ = nullptr;
-  }
+HRESULT Application::PostMessageLoop() noexcept {
+  if (dialog_ != nullptr)
+    dialog_.reset();
 
-  if (message_loop_ != nullptr) {
-    delete message_loop_;
-    message_loop_ = nullptr;
-  }
+  if (message_loop_ != nullptr)
+    message_loop_.reset();
 
   return CAtlExeModuleT::PostMessageLoop();
 }
 
-void Application::RunMessageLoop() throw() {
+void Application::RunMessageLoop() noexcept {
   DCHECK(message_loop_ != nullptr);
   message_loop_->Run();
 }

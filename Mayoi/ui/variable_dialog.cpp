@@ -23,7 +23,8 @@ void VariableDialog::OnOK(UINT notify_code, int id, CWindow control) {
     CString message;
     message.LoadString(IDS_ERR_NOT_SPECIFIED);
 
-    EDITBALLOONTIP balloon{sizeof(balloon)};
+    EDITBALLOONTIP balloon{};
+    balloon.cbStruct = sizeof(balloon);
     balloon.pszText = message;
 
     name_edit_.ShowBalloonTip(&balloon);

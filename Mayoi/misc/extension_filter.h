@@ -10,9 +10,9 @@
 namespace mayoi {
 namespace misc {
 
-class ExtensionFilter {
+class ExtensionFilter final {
  public:
-  ExtensionFilter();
+  ExtensionFilter() = default;
 
   void AddExtensions(const CString& extensions);
 

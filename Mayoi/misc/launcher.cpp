@@ -23,8 +23,8 @@ const char kUnset[] = "unset";
 using ::base::string16;
 
 Launcher::Launcher()
-    : command_line_(base::CommandLine::NO_PROGRAM),
-      ignore_environment_(false) {}
+    : command_line_{base::CommandLine::NO_PROGRAM},
+      ignore_environment_{false} {}
 
 HRESULT Launcher::Setup(const base::CommandLine* command_line) {
   auto args = command_line->GetArgs();
@@ -41,7 +41,7 @@ HRESULT Launcher::Setup(const base::CommandLine* command_line) {
     }
 
     auto index = arg.find(L'=');
-    if (index == arg.npos) {
+    if (index == string16::npos) {
       has_program = true;
       SetProgram(arg);
       continue;
@@ -80,7 +80,7 @@ HRESULT Launcher::Launch() {
       if (*row == L'=')
         continue;
 
-      string16 name(row, wcschr(row, L'='));
+      string16 name{row, wcschr(row, L'=')};
       if (variables_.find(name) != variables_.end())
         continue;
       if (unsets_.find(name) != unsets_.end())
@@ -136,7 +136,7 @@ string16 Launcher::GetProgram() const {
 }
 
 void Launcher::SetProgram(base::StringPiece16 program) {
-  command_line_.SetProgram(base::FilePath(program));
+  command_line_.SetProgram(base::FilePath{program});
 }
 
 string16 Launcher::GetArgument() const {
@@ -156,7 +156,7 @@ void Launcher::UnsetVariable(const string16& name) {
 }
 
 string16 Launcher::GetCommandLineString() const {
-  base::CommandLine command_line(base::CommandLine::NO_PROGRAM);
+  base::CommandLine command_line{base::CommandLine::NO_PROGRAM};
 
   if (ignore_environment_)
     command_line.AppendSwitch(kIgnoreEnvironment);

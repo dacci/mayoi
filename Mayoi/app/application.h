@@ -9,6 +9,8 @@
 
 #include <base/at_exit.h>
 
+#include <memory>
+
 namespace mayoi {
 namespace ui {
 
@@ -18,25 +20,25 @@ class ConfigureDialog;
 
 namespace app {
 
-class Application : public CAtlExeModuleT<Application> {
+class Application final : public CAtlExeModuleT<Application> {
  public:
-  Application();
+  Application() = default;
   ~Application();
 
-  bool ParseCommandLine(LPCTSTR command_line, HRESULT* result) throw();
-  HRESULT PreMessageLoop(int show_mode) throw();
-  HRESULT PostMessageLoop() throw();
-  void RunMessageLoop() throw();
+  bool ParseCommandLine(LPCTSTR command_line, HRESULT* result) noexcept;
+  HRESULT PreMessageLoop(int show_mode) noexcept;
+  HRESULT PostMessageLoop() noexcept;
+  void RunMessageLoop() noexcept;
 
   CMessageLoop* GetMessageLoop() const {
-    return message_loop_;
+    return message_loop_.get();
   }
 
  private:
   base::AtExitManager at_exit_manager_;
 
-  CMessageLoop* message_loop_;
-  ui::ConfigureDialog* dialog_;
+  std::unique_ptr<CMessageLoop> message_loop_;
+  std::unique_ptr<ui::ConfigureDialog> dialog_;
 
   Application(const Application&) = delete;
   Application& operator=(const Application&) = delete;

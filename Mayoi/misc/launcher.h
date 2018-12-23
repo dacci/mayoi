@@ -15,13 +15,13 @@
 namespace mayoi {
 namespace misc {
 
-struct CaseInsensitiveLess {
+struct CaseInsensitiveLess final {
   bool operator()(const base::string16& a, const base::string16& b) const {
     return _wcsicmp(a.c_str(), b.c_str()) < 0;
   }
 };
 
-class Launcher {
+class Launcher final {
  public:
   typedef std::map<base::string16, base::string16, CaseInsensitiveLess>
       VariableMap;
