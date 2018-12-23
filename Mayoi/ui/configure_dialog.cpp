@@ -3,6 +3,7 @@
 #include "ui/configure_dialog.h"
 
 #include <propkey.h>
+#include <propvarutil.h>
 #include <shlobj.h>
 
 #include <atldlgs.h>
@@ -226,17 +227,26 @@ void ConfigureDialog::OnFileOpen(UINT /*notify_code*/, int /*id*/,
 
   misc::Launcher launcher;
 
-  {
+  do {
     CComQIPtr<IPropertyStore> store{shortcut_};
+
     base::win::ScopedPropVariant prop;
     result = store->GetValue(PKEY_Link_Arguments, prop.Receive());
-    if (SUCCEEDED(result)) {
-      base::string16 arguments{prop.get().bstrVal};
-      arguments.insert(0, L"\"\" ");
-      auto command_line = base::CommandLine::FromString(arguments);
-      launcher.Setup(&command_line);
+    if (FAILED(result)) {
+      LOG(WARNING) << "Failed to get link arguments: 0x" << std::hex << result;
+      break;
     }
-  }
+
+    if (prop.get().vt != VT_BSTR && prop.get().vt != VT_LPWSTR) {
+      LOG(WARNING) << "The link arguments is not a string.";
+      break;
+    }
+
+    base::string16 arguments{prop.get().bstrVal};
+    arguments.insert(0, L"\"\" ");
+    auto command_line = base::CommandLine::FromString(arguments);
+    launcher.Setup(&command_line);
+  } while (false);
 
   file_name_ = launcher.GetProgram().c_str();
   arguments_ = launcher.GetArgument().c_str();
