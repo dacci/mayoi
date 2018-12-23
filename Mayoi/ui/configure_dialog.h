@@ -15,6 +15,7 @@
 #include <atlcrack.h>
 #include <atlctrls.h>
 #include <atlddx.h>
+#include <atlframe.h>
 
 #include "misc/extension_filter.h"
 #include "res/resource.h"
@@ -24,6 +25,7 @@ namespace ui {
 
 class ConfigureDialog final : public CDialogImpl<ConfigureDialog>,
                               public CWinDataExchange<ConfigureDialog>,
+                              public CDialogResize<ConfigureDialog>,
                               private CMessageFilter {
  public:
   static const UINT IDD = IDD_CONFIGURE;
@@ -33,6 +35,7 @@ class ConfigureDialog final : public CDialogImpl<ConfigureDialog>,
   BEGIN_MSG_MAP(ConfigureDialog)
     MSG_WM_INITDIALOG(OnInitDialog)
     MSG_WM_DESTROY(OnDestroy)
+    MSG_WM_GETMINMAXINFO(OnGetMinMaxInfo)
 
     NOTIFY_HANDLER_EX(IDC_UNSET_LIST, NM_DBLCLK, OnUnsetItemDoubleClicked)
     NOTIFY_HANDLER_EX(IDC_UNSET_LIST, LVN_ITEMCHANGED, OnUnsetItemChanged)
@@ -54,6 +57,8 @@ class ConfigureDialog final : public CDialogImpl<ConfigureDialog>,
     COMMAND_ID_HANDLER_EX(IDC_MERGE_ADD, OnMergeEdit)
     COMMAND_ID_HANDLER_EX(IDC_MERGE_EDIT, OnMergeEdit)
     COMMAND_ID_HANDLER_EX(IDC_MERGE_DEL, OnMergeDel)
+
+    CHAIN_MSG_MAP(CDialogResize)
   END_MSG_MAP()
 
   BEGIN_DDX_MAP(ConfigureDialog)
@@ -72,6 +77,32 @@ class ConfigureDialog final : public CDialogImpl<ConfigureDialog>,
     DDX_CHECK(IDC_IGNORE_ENV, ignore_environment_)
   END_DDX_MAP()
 
+  BEGIN_DLGRESIZE_MAP(ConfigureDialog)
+    DLGRESIZE_CONTROL(IDC_FILE_NAME, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_SELECT_COMMAND, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(IDC_ARGUMENTS, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_DIRECTORY, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_SELECT_DIR, DLSZ_MOVE_X)
+
+    DLGRESIZE_CONTROL(IDC_UNSET_GROUP, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_UNSET_LIST, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_UNSET_ADD, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(IDC_UNSET_EDIT, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(IDC_UNSET_DEL, DLSZ_MOVE_X)
+
+    DLGRESIZE_CONTROL(IDC_MERGE_GROUP, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_MERGE_LIST, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_MERGE_ADD, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(IDC_MERGE_EDIT, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(IDC_MERGE_DEL, DLSZ_MOVE_X)
+
+    DLGRESIZE_CONTROL(IDC_OPTION_GROUP, DLSZ_SIZE_X)
+
+    DLGRESIZE_CONTROL(ID_FILE_NEW, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(ID_FILE_OPEN, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(ID_FILE_SAVE, DLSZ_MOVE_X)
+  END_DLGRESIZE_MAP()
+
  private:
   void UpdateIcon();
   void ClearContent();
@@ -81,6 +112,7 @@ class ConfigureDialog final : public CDialogImpl<ConfigureDialog>,
 
   BOOL OnInitDialog(CWindow focus, LPARAM init_param);
   void OnDestroy();
+  void OnGetMinMaxInfo(LPMINMAXINFO min_max_info);
 
   LRESULT OnUnsetItemDoubleClicked(NMHDR* header);
   LRESULT OnUnsetItemChanged(NMHDR* header);

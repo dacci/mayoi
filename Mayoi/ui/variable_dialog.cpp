@@ -13,7 +13,15 @@ BOOL VariableDialog::OnInitDialog(CWindow /*focus*/, LPARAM /*init_param*/) {
   if (name_only_)
     value_edit_.EnableWindow(FALSE);
 
+  DlgResize_Init();
+
   return TRUE;
+}
+
+void VariableDialog::OnGetMinMaxInfo(LPMINMAXINFO min_max_info) {
+  SetMsgHandled(FALSE);
+
+  min_max_info->ptMaxTrackSize.y = m_ptMinTrackSize.y;
 }
 
 void VariableDialog::OnOK(UINT notify_code, int id, CWindow control) {

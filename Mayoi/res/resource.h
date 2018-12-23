@@ -11,15 +11,18 @@
 #define IDC_ARGUMENTS                   40003
 #define IDC_DIRECTORY                   40004
 #define IDC_SELECT_DIR                  40005
-#define IDC_UNSET_LIST                  40006
-#define IDC_UNSET_ADD                   40007
-#define IDC_UNSET_EDIT                  40008
-#define IDC_UNSET_DEL                   40009
-#define IDC_MERGE_LIST                  40010
-#define IDC_MERGE_ADD                   40011
-#define IDC_MERGE_EDIT                  40012
-#define IDC_MERGE_DEL                   40013
-#define IDC_IGNORE_ENV                  40014
+#define IDC_UNSET_GROUP                 40006
+#define IDC_UNSET_LIST                  40007
+#define IDC_UNSET_ADD                   40008
+#define IDC_UNSET_EDIT                  40009
+#define IDC_UNSET_DEL                   40010
+#define IDC_MERGE_GROUP                 40011
+#define IDC_MERGE_LIST                  40012
+#define IDC_MERGE_ADD                   40013
+#define IDC_MERGE_EDIT                  40014
+#define IDC_MERGE_DEL                   40015
+#define IDC_OPTION_GROUP                40016
+#define IDC_IGNORE_ENV                  40017
 #define IDC_NAME                        40001
 #define IDC_VALUE                       40002
 

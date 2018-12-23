@@ -11,6 +11,7 @@
 #include <atlcrack.h>
 #include <atlctrls.h>
 #include <atlddx.h>
+#include <atlframe.h>
 
 #include "res/resource.h"
 
@@ -18,7 +19,8 @@ namespace mayoi {
 namespace ui {
 
 class VariableDialog final : public CDialogImpl<VariableDialog>,
-                             public CWinDataExchange<VariableDialog> {
+                             public CWinDataExchange<VariableDialog>,
+                             public CDialogResize<VariableDialog> {
  public:
   static const UINT IDD = IDD_VARIABLE;
 
@@ -29,9 +31,12 @@ class VariableDialog final : public CDialogImpl<VariableDialog>,
 
   BEGIN_MSG_MAP(VariableDialog)
     MSG_WM_INITDIALOG(OnInitDialog)
+    MSG_WM_GETMINMAXINFO(OnGetMinMaxInfo)
 
     COMMAND_ID_HANDLER_EX(IDOK, OnOK)
     COMMAND_ID_HANDLER_EX(IDCANCEL, OnCancel)
+
+    CHAIN_MSG_MAP(CDialogResize)
   END_MSG_MAP()
 
   BEGIN_DDX_MAP(VariableDialog)
@@ -41,8 +46,16 @@ class VariableDialog final : public CDialogImpl<VariableDialog>,
     DDX_CONTROL_HANDLE(IDC_VALUE, value_edit_)
   END_DDX_MAP()
 
+  BEGIN_DLGRESIZE_MAP(VariableDialog)
+    DLGRESIZE_CONTROL(IDC_NAME, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDC_VALUE, DLSZ_SIZE_X)
+    DLGRESIZE_CONTROL(IDOK, DLSZ_MOVE_X)
+    DLGRESIZE_CONTROL(IDCANCEL, DLSZ_MOVE_X)
+  END_DLGRESIZE_MAP()
+
  private:
   BOOL OnInitDialog(CWindow focus, LPARAM init_param);
+  void OnGetMinMaxInfo(LPMINMAXINFO min_max_info);
 
   void OnOK(UINT notify_code, int id, CWindow control);
   void OnCancel(UINT notify_code, int id, CWindow control);

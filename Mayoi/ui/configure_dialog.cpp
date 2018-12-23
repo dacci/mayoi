@@ -110,6 +110,8 @@ BOOL ConfigureDialog::OnInitDialog(CWindow /*focus*/, LPARAM /*init_param*/) {
   merge_list_.AddColumn(value_column, 1);
   merge_list_.SetColumnWidth(1, 200);
 
+  DlgResize_Init();
+
   return TRUE;
 }
 
@@ -118,6 +120,12 @@ void ConfigureDialog::OnDestroy() {
     LOG(WARNING) << "Failed to remove message filter.";
 
   PostQuitMessage(0);
+}
+
+void ConfigureDialog::OnGetMinMaxInfo(LPMINMAXINFO min_max_info) {
+  SetMsgHandled(FALSE);
+
+  min_max_info->ptMaxTrackSize.y = m_ptMinTrackSize.y;
 }
 
 LRESULT ConfigureDialog::OnUnsetItemDoubleClicked(NMHDR* /*header*/) {
