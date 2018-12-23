@@ -33,6 +33,8 @@ class VariableDialog final : public CDialogImpl<VariableDialog>,
     MSG_WM_INITDIALOG(OnInitDialog)
     MSG_WM_GETMINMAXINFO(OnGetMinMaxInfo)
 
+    COMMAND_ID_HANDLER_EX(ID_FILE_NEW, OnFileOpen)
+    COMMAND_ID_HANDLER_EX(ID_FILE_OPEN, OnFileOpen)
     COMMAND_ID_HANDLER_EX(IDOK, OnOK)
     COMMAND_ID_HANDLER_EX(IDCANCEL, OnCancel)
 
@@ -43,7 +45,6 @@ class VariableDialog final : public CDialogImpl<VariableDialog>,
     DDX_TEXT(IDC_NAME, name_)
     DDX_CONTROL_HANDLE(IDC_NAME, name_edit_)
     DDX_TEXT(IDC_VALUE, value_)
-    DDX_CONTROL_HANDLE(IDC_VALUE, value_edit_)
   END_DDX_MAP()
 
   BEGIN_DLGRESIZE_MAP(VariableDialog)
@@ -57,13 +58,13 @@ class VariableDialog final : public CDialogImpl<VariableDialog>,
   BOOL OnInitDialog(CWindow focus, LPARAM init_param);
   void OnGetMinMaxInfo(LPMINMAXINFO min_max_info);
 
+  void OnFileOpen(UINT notify_code, int id, CWindow control);
   void OnOK(UINT notify_code, int id, CWindow control);
   void OnCancel(UINT notify_code, int id, CWindow control);
 
   const bool name_only_;
 
   CEdit name_edit_;
-  CEdit value_edit_;
 
   VariableDialog(const VariableDialog&) = delete;
   VariableDialog& operator=(const VariableDialog&) = delete;
