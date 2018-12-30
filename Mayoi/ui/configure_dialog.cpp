@@ -16,6 +16,7 @@
 
 #include "app/application.h"
 #include "misc/launcher.h"
+#include "ui/path_dialog.h"
 #include "ui/variable_dialog.h"
 
 namespace mayoi {
@@ -450,26 +451,49 @@ void ConfigureDialog::OnUnsetDel(UINT /*notify_code*/, int /*id*/,
 
 void ConfigureDialog::OnMergeEdit(UINT /*notify_code*/, int id,
                                   CWindow /*control*/) {
-  VariableDialog dialog{false};
-
   auto index = -1;
+  CString name, value;
+  INT_PTR answer = IDRETRY;
+
   if (id == IDC_MERGE_EDIT) {
     index = merge_list_.GetSelectedIndex();
-    merge_list_.GetItemText(index, 0, dialog.name_);
-    merge_list_.GetItemText(index, 1, dialog.value_);
+    merge_list_.GetItemText(index, 0, name);
+    merge_list_.GetItemText(index, 1, value);
+
+    if (name.Right(4).CompareNoCase(L"PATH") == 0) {
+      PathDialog dialog;
+      dialog.value_ = value;
+
+      answer = dialog.DoModal(m_hWnd);
+      if (answer == IDOK)
+        value = dialog.value_;
+      else if (answer == IDCANCEL)
+        return;
+    }
   }
 
-  if (dialog.DoModal(m_hWnd) != IDOK)
-    return;
+  if (answer != IDOK) {
+    VariableDialog dialog{false};
+    dialog.name_ = name;
+    dialog.value_ = value;
+
+    answer = dialog.DoModal(m_hWnd);
+    if (answer == IDOK) {
+      name = dialog.name_;
+      value = dialog.value_;
+    } else {
+      return;
+    }
+  }
 
   if (id == IDC_MERGE_EDIT) {
-    merge_list_.SetItemText(index, 0, dialog.name_);
+    merge_list_.SetItemText(index, 0, name);
   } else {
     index = merge_list_.GetItemCount();
-    index = merge_list_.InsertItem(index, dialog.name_);
+    index = merge_list_.InsertItem(index, name);
   }
 
-  merge_list_.SetItemText(index, 1, dialog.value_);
+  merge_list_.SetItemText(index, 1, value);
   merge_list_.SelectItem(index);
 }
 

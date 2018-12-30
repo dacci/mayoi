@@ -27,7 +27,6 @@ class PathDialog final : public CDialogImpl<PathDialog>,
 
   PathDialog() = default;
 
-  CString name_;
   CString value_;
 
   BEGIN_MSG_MAP(PathDialog)
