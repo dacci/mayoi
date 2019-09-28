@@ -14,6 +14,8 @@
 #include <atlframe.h>
 #include <atlmisc.h>
 
+#include <base/macros.h>
+
 #include "res/resource.h"
 
 namespace mayoi {
@@ -91,8 +93,7 @@ class PathDialog final : public CDialogImpl<PathDialog>,
   CButton up_button_;
   CButton down_button_;
 
-  PathDialog(const PathDialog&) = delete;
-  PathDialog& operator=(const PathDialog&) = delete;
+  DISALLOW_COPY_AND_ASSIGN(PathDialog);
 };
 
 }  // namespace ui

@@ -5,6 +5,8 @@
 
 #include <atlstr.h>
 
+#include <base/macros.h>
+
 #include <vector>
 
 namespace mayoi {
@@ -29,8 +31,7 @@ class ExtensionFilter final {
   std::vector<CString> specs_;
   std::vector<COMDLG_FILTERSPEC> filters_;
 
-  ExtensionFilter(const ExtensionFilter&) = delete;
-  ExtensionFilter& operator=(const ExtensionFilter&) = delete;
+  DISALLOW_COPY_AND_ASSIGN(ExtensionFilter);
 };
 
 }  // namespace misc

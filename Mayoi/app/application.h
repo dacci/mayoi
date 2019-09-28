@@ -8,6 +8,7 @@
 #include <atlapp.h>
 
 #include <base/at_exit.h>
+#include <base/macros.h>
 
 #include <memory>
 
@@ -40,8 +41,7 @@ class Application final : public CAtlExeModuleT<Application> {
   std::unique_ptr<CMessageLoop> message_loop_;
   std::unique_ptr<ui::ConfigureDialog> dialog_;
 
-  Application(const Application&) = delete;
-  Application& operator=(const Application&) = delete;
+  DISALLOW_COPY_AND_ASSIGN(Application);
 };
 
 inline Application* GetApplication() {

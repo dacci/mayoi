@@ -17,6 +17,8 @@
 #include <atlddx.h>
 #include <atlframe.h>
 
+#include <base/macros.h>
+
 #include "misc/extension_filter.h"
 #include "res/resource.h"
 
@@ -155,8 +157,7 @@ class ConfigureDialog final : public CDialogImpl<ConfigureDialog>,
   CButton merge_del_button_;
   bool ignore_environment_;
 
-  ConfigureDialog(const ConfigureDialog&) = delete;
-  ConfigureDialog& operator=(const ConfigureDialog&) = delete;
+  DISALLOW_COPY_AND_ASSIGN(ConfigureDialog);
 };
 
 }  // namespace ui

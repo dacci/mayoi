@@ -13,6 +13,8 @@
 #include <atlddx.h>
 #include <atlframe.h>
 
+#include <base/macros.h>
+
 #include "res/resource.h"
 
 namespace mayoi {
@@ -66,8 +68,7 @@ class VariableDialog final : public CDialogImpl<VariableDialog>,
 
   CEdit name_edit_;
 
-  VariableDialog(const VariableDialog&) = delete;
-  VariableDialog& operator=(const VariableDialog&) = delete;
+  DISALLOW_COPY_AND_ASSIGN(VariableDialog);
 };
 
 }  // namespace ui

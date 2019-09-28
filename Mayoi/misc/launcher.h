@@ -6,6 +6,7 @@
 #include <winerror.h>
 
 #include <base/command_line.h>
+#include <base/macros.h>
 
 #include <base/strings/string_piece.h>
 
@@ -65,8 +66,7 @@ class Launcher final {
   VariableSet unsets_;
   bool ignore_environment_;
 
-  Launcher(const Launcher&) = delete;
-  Launcher& operator=(const Launcher&) = delete;
+  DISALLOW_COPY_AND_ASSIGN(Launcher);
 };
 
 }  // namespace misc
